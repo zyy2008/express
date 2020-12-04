@@ -1,9 +1,7 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+import admin from './admin'
 
-module.exports = router;
+export default app => {
+	app.use('/admin', admin);
+}

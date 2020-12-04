@@ -1,8 +1,9 @@
 'use strict';
-var mongoose = require('mongoose');
-var chalk = require('chalk');
 
-mongoose.connect('mongodb://localhost:27017/test', {useMongoClient:true});
+import mongoose from 'mongoose';
+import config from 'config-lite';
+import chalk from 'chalk';
+mongoose.connect(config.url, {useMongoClient:true});
 mongoose.Promise = global.Promise;
 
 const db = mongoose.connection;
@@ -27,4 +28,4 @@ db.on('close', function() {
     mongoose.connect(config.url, {server:{auto_reconnect:true}});
 });
 
-module.exports = db;
+export default db;
