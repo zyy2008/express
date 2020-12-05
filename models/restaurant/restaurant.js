@@ -48,6 +48,10 @@ const restSchema = new Schema({
 
 })
 
+restSchema.index({
+    id: 1
+});
+
 const restaurantModel = mongoose.model('Restaurant', restSchema, 'restaurant');
 
 export default restaurantModel
