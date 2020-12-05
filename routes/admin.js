@@ -1,9 +1,11 @@
 'use strict';
 
 import express from 'express'
-import Admin from '../controller/admin/admin'
+
+import User from '../controller/admin/user'
+
 const router = express.Router()
 
-router.post('/login', Admin.login);
+router.post('/login', User.login);
 
 export default router

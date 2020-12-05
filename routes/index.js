@@ -3,5 +3,5 @@
 import admin from './admin'
 
 export default app => {
-	app.use('/admin', admin);
+	app.use('/user', admin);
 }
