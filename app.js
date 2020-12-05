@@ -9,6 +9,7 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 import history from 'connect-history-api-fallback';
 import chalk from 'chalk';
+import expressJwt from "express-jwt"
 // import Statistic from './middlewares/statistic'
 
 const app = express();
@@ -33,18 +34,20 @@ app.all('*', (req, res, next) => {
 	}
 });
 
-// app.use(Statistic.apiRecord)
-const MongoStore = connectMongo(session);
-app.use(cookieParser());
-app.use(session({
-	name: config.session.name,
-	secret: config.session.secret,
-	resave: true,
-	saveUninitialized: false,
-	cookie: config.session.cookie,
-	store: new MongoStore({
-		url: config.url
-	})
+app.use(expressJwt({
+	secret: 'secret12345', // 签名的密钥 或 PublicKey
+	algorithms: ["HS256"],
+	credentialsRequired: false,
+	getToken: function fromHeaderOrQuerystring(req) {
+		if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+			return req.headers.authorization.split(' ')[1]
+		} else if (req.query && req.query.token) {
+			return req.query.token
+		}
+		return null
+	}
+}).unless({
+	path: ['/user/login'] // 指定路径不经过 Token 解析
 }))
 
 
