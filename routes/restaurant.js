@@ -5,6 +5,8 @@ import Restaurant from '../controller/restaurant/restaurant'
 
 const router = express.Router();
 
-router.get('/getRestaurants', Restaurant.getRestaurants);
+router.get('/getRestaurants', (eq) => {
+    console.log(eq)
+}, Restaurant.getRestaurants);
 
 export default router

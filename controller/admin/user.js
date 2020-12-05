@@ -43,7 +43,7 @@ class User {
 					})
 					return
 				} else {
-					const token = 'Bearer ' + jwt.sign({
+					const token = jwt.sign({
 							_id: user._id
 						},
 						'secret12345', {
