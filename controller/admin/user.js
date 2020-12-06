@@ -35,7 +35,6 @@ class User {
 					username
 				});
 				if (user.password.toString() !== password.toString()) {
-					console.log('用户登录密码错误')
 					res.send({
 						status: 0,
 						type: 'ERROR_PASSWORD',
@@ -64,6 +63,15 @@ class User {
 					message: 'User login failed',
 				})
 			}
+		})
+	}
+	async logout(req, res, next) {
+		console.log(jwt)
+		jwt.verify.decode(req.headers.token)
+		res.send({
+			status: 'ok',
+			type: 'sucess',
+			message: 'Sign out successfully',
 		})
 	}
 }
