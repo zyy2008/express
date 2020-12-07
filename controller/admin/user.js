@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 class User {
 	constructor() {
 		this.login = this.login.bind(this);
+		this.addUser = this.addUser.bind(this);
 	}
 	async login(req, res, next) {
 		const form = new formidable.IncomingForm();
@@ -65,14 +66,45 @@ class User {
 			}
 		})
 	}
-	async logout(req, res, next) {
-		console.log(jwt)
-		jwt.verify.decode(req.headers.token)
-		res.send({
-			status: 'ok',
-			type: 'sucess',
-			message: 'Sign out successfully',
+	async addUser(req, res, next) {
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			if (err) {
+				res.send({
+					status: 0,
+					type: 'FORM_DATA_ERROR',
+					message: 'Form information error'
+				})
+				return
+			} else {
+				const {
+					username,
+					password
+				} = fields;
+				const admin = await userModel.findOne({
+					username
+				})
+				if (admin) {
+					res.send({
+						status: 0,
+						type: 'USER_ERR',
+						message: 'The user already exists',
+					})
+				} else {
+					const newAdmin = {
+						username,
+						password,
+					}
+					await userModel.create(newAdmin)
+					res.send({
+						status: 'ok',
+						message: 'registration success',
+					})
+				}
+			}
+
 		})
+
 	}
 }
 
