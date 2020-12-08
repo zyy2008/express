@@ -5,6 +5,10 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
 const restSchema = new Schema({
+    user_id: {
+        type: String,
+        default: ""
+    },
     name: {
         type: String,
         default: ""
@@ -48,9 +52,6 @@ const restSchema = new Schema({
 
 })
 
-restSchema.index({
-    id: 1
-});
 
 const restaurantModel = mongoose.model('Restaurant', restSchema, 'restaurant');
 

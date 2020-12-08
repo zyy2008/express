@@ -2,6 +2,7 @@
 
 import RestaurantModel from '../../models/restaurant/restaurant'
 import formidable from 'formidable'
+var common = require('../../middlewares/common')
 
 class Restaurant {
     constructor() {
@@ -10,9 +11,7 @@ class Restaurant {
     }
     async getRestaurants(req, res, next) {
         try {
-            const allRestaurant = await RestaurantModel.find({}, '-_id').sort({
-                "_id": 1
-            })
+            const allRestaurant = await RestaurantModel.find()
             res.send({
                 status: 'ok',
                 data: allRestaurant,
@@ -28,45 +27,86 @@ class Restaurant {
     //add
     async addRestaurants(req, res, next) {
         const form = new formidable.IncomingForm();
-        form.parse(req, async (err, fields, files) => {
-            try {
-                if (!fields.name) {
-                    throw new Error('必须填写商店名称');
-                } else if (!fields.address) {
-                    throw new Error('必须填写商店地址');
-                } else if (!fields.phone) {
-                    throw new Error('必须填写联系电话');
-                } else if (!fields.latitude || !fields.longitude) {
-                    throw new Error('商店位置信息错误');
-                } else if (!fields.image_path) {
-                    throw new Error('必须上传商铺图片');
-                } else if (!fields.category) {
-                    throw new Error('必须上传食品种类');
+        const token = req.headers['token']
+        form.parse(req, (err, fields, files) => {
+            common.verifytoken(token).then(async data => {
+                if (data) {
+                    try {
+                        const {
+                            _id
+                        } = data
+                        let copy = Object.assign({}, fields)
+                        copy.user_id = _id
+                        const restaurant = new RestaurantModel(copy);
+                        await restaurant.save();
+                        res.send({
+                            status: 'ok',
+                            sussess: 'success',
+                            message: "add success"
+                        })
+                    } catch (err) {
+                        res.send({
+                            status: 0,
+                            type: 'err',
+                            message: 'add err',
+                        })
+                    }
+
+                } else {
+                    res.send({
+                        status: 0,
+                        type: 'err',
+                        message: 'add err',
+                    })
                 }
-            } catch (err) {
-                res.send({
-                    status: 0,
-                    type: 'ERROR_PARAMS',
-                    message: err.message
-                })
-                return
-            }
+            })
+        })
+    }
+    async updRestaurants(req, res, next) {
+        const form = new formidable.IncomingForm();
+        form.parse(req, async (err, fields, files) => {
+            const {
+                _id
+            } = fields
+            const copy = Object.assign({}, fields)
+            delete copy._id
             try {
-                const restaurant = new RestaurantModel(newShop);
-                await restaurant.save();
+                await RestaurantModel.findOneAndUpdate({
+                    _id
+                }, {
+                    $set: copy
+                });
                 res.send({
-                    status: 1,
+                    status: 'ok',
                     sussess: 'success',
-                    message: "add success"
+                    message: "update success"
                 })
             } catch (err) {
                 res.send({
                     status: 0,
                     type: 'err',
-                    message: 'add err',
+                    message: 'update err',
                 })
             }
         })
+    }
+    async deleteResturant(req, res, next) {
+        const restaurant_id = req.params.id;
+        try {
+            await RestaurantModel.remove({
+                _id: restaurant_id
+            });
+            res.send({
+                status: 'ok',
+                success: 'delete success',
+            })
+        } catch (err) {
+            res.send({
+                status: 0,
+                type: 'DELETE_RESTURANT_FAILED',
+                message: 'delete err',
+            })
+        }
     }
 }
 

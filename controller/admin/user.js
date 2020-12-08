@@ -53,7 +53,8 @@ class User {
 					res.json({
 						status: 'ok',
 						data: {
-							token: token
+							token: token,
+							userId: user._id
 						}
 					})
 				}
