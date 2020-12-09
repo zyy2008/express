@@ -19,9 +19,7 @@ class User {
 			} = fields;
 			try {
 				if (!username) {
-					throw new Error('用户名参数错误');
-				} else if (!password) {
-					throw new Error('密码参数错误');
+					throw new Error('The username parameter error');
 				}
 			} catch (err) {
 				res.send({
